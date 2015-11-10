@@ -1,0 +1,84 @@
+body {
+	counter-reset: chapter1;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+	clear:both;
+	padding: 2px 0px;
+}
+
+h1 {
+	counter-reset: chapter2;
+	border: dashed 1px #333333;
+	border-style: none none solid none;
+	font-size: 20pt;
+	color: #333333;
+	padding: 2px 5px;
+}
+h1:before {
+	content: counter(chapter1) ". ";
+	counter-increment: chapter1;
+}
+
+h2 {
+	border: solid 1px #666666;
+	border-style: none none dashed none;
+	font-size: 18pt;
+	color: #666666;
+	font-weight: normal;
+	counter-reset: chapter3;
+}
+h2:before {
+	content: counter(chapter1) "." counter(chapter2) " ";
+	counter-increment: chapter2;
+}
+h3 {
+	font-size: 16pt;
+	color: #8e0000;
+	font-weight: normal;
+	counter-reset: chapter4;
+}
+h3:before {
+	content: counter(chapter1) "." counter(chapter2) "." counter(chapter3) " ";
+	counter-increment: chapter3;
+}
+h4 {
+	border: none;
+	font-size: 14pt;
+	color: #333333;
+	counter-reset: chapter5;
+}
+h4:before {
+	content: counter(chapter1) "." counter(chapter2) "." counter(chapter3) "." counter(chapter4) " ";
+	counter-increment: chapter4;
+}
+h5 {
+	border: none;
+	font-size: 13pt;
+	color: #666666;
+	counter-reset: chapter6;
+}
+h5:before {
+	content: counter(chapter1) "." counter(chapter2) "." counter(chapter3) "." counter(chapter4) "." counter(chapter5) " ";
+	counter-increment: chapter5;
+}
+h6 {
+	border: none;
+	font-size: 12pt;
+	color: #999999;
+	counter-reset: chapter7;
+}
+h6:before {
+	content: counter(chapter1) "." counter(chapter2) "." counter(chapter3) "." counter(chapter4) "." counter(chapter5) "." counter(chapter6) " ";
+	counter-increment: chapter6;
+}
+h7 {
+	border: none;
+	font-size: 10pt;
+	color: #999999;
+	font-weight: normal;
+}
+h7:before {
+	content: counter(chapter1) "." counter(chapter2) "." counter(chapter3) "." counter(chapter4) "." counter(chapter5) "." counter(chapter6) "." counter(chapter7) " ";
+	counter-increment: chapter7;
+}

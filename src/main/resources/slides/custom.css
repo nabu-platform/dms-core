@@ -1,0 +1,45 @@
+.code-keyword {
+	color: #cd65aa;
+}
+.code-string {
+	color: #c4c4ff;
+}
+.code-comment {
+	color: #8ed7b3;
+}
+.xml-element {
+	color: #00eaea;
+}
+.xml-attribute {
+	color: #df52df;
+}
+.code-label {
+	font-weight: bold !important;
+	color: #AAAAAA !important;
+}
+.code-method {
+	color: #00eaea;	
+}
+.code-assign {
+	color: #df52df;	
+}
+
+* {
+	font-size: 14pt !important;
+	font-family: "DejaVu Sans" !important;
+}
+ 
+.reveal li {
+	padding-bottom: 5px;
+}
+
+.reveal blockquote, .reveal blockquote * {
+	font-family: Monospace !important;
+	font-size: 12pt !important;
+}
+
+strong {
+	background-color: #ffc6c6;
+	color: #7c0707;
+	padding: 0px 5px !important;
+}

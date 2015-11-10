@@ -1,0 +1,25 @@
+.code-keyword {
+	color: #7f0055;
+}
+.code-string {
+	color: #0000FF;
+}
+.code-comment {
+	color: #3f7f5f;
+}
+.xml-element {
+	color: #008080;
+}
+.xml-attribute {
+	color: #7f007f;
+}
+.code-label {
+	font-weight: bold !important;
+	color: #AAAAAA !important;
+}
+.code-method {
+	color: #008080;	
+}
+.code-assign {
+	color: #7f007f;	
+}

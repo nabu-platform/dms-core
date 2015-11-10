@@ -1,0 +1,98 @@
+
+.tableOfContents {
+	counter-reset: toch1;
+	background-color: rgba(250,250,250, 1);
+	border: solid 1px #CCCCCC;
+	border-style: none none solid solid;
+	padding: 10px 10px;
+	max-height: 80%;
+	overflow: auto;
+}
+
+.tableOfContents ul li:before{
+	margin-right: 5px;
+	color: rgb(33,55,76);
+	background-color: #F4F4F4;
+	border: solid 1px rgb(154,183,211);
+	border: solid 1px #CCCCCC;
+	border-style: none none dashed solid;
+	padding: 2px 5px;
+	display: inline-block;
+}
+
+.tableOfContents *{
+	font-size: 8pt;
+}
+.tableOfContents li {
+	list-style-type: none;
+	color: rgb(33,55,76);
+}
+.tableOfContents li a {
+	color: #0078D0;
+	font-size: 10pt;
+}
+.tableOfContents li:hover a {
+	color: #003757;
+	text-decoration: none;
+}
+.tableOfContents ul {
+	margin-left: 0px;
+	padding-left: 10px;
+}
+
+.tableOfContents > ul > li {
+	counter-reset: toch2;
+}
+.tableOfContents ul li:hover:before {
+	border-color: #003757;
+	color: #003757;
+	background-color: #DDDDDD;
+}
+.tableOfContents > ul > li:before {
+	content: counter(toch1);
+	counter-increment: toch1;
+}
+
+.tableOfContents > ul > ul > li{
+	counter-reset: toch3;
+}
+.tableOfContents > ul > ul > li:before {
+	content: counter(toch1) "." counter(toch2);
+	counter-increment: toch2;
+}
+
+.tableOfContents > ul > ul > ul > li{
+	counter-reset: toch4;
+}
+.tableOfContents > ul > ul > ul > li:before {
+	content: counter(toch1) "." counter(toch2) "." counter(toch3);
+	counter-increment: toch3;
+}
+
+.tableOfContents > ul > ul > ul > ul > li{
+	counter-reset: toch5;
+}
+.tableOfContents > ul > ul > ul > ul > li:before {
+	content: counter(toch1) "." counter(toch2) "." counter(toch3) "." counter(toch4);
+	counter-increment: toch4;
+}
+
+.tableOfContents > ul > ul > ul > ul > ul > li{
+	counter-reset: toch6;
+}
+.tableOfContents > ul > ul > ul > ul > ul > li:before {
+	content: counter(toch1) "." counter(toch2) "." counter(toch3) "." counter(toch4) "." counter(toch5);
+	counter-increment: toch5;
+}
+
+.tableOfContents > ul > ul > ul > ul > ul > ul > li{
+	counter-reset: toch7;
+}
+.tableOfContents > ul > ul > ul > ul > ul > ul > li:before {
+	content: counter(toch1) "." counter(toch2) "." counter(toch3) "." counter(toch4) "." counter(toch5) "." counter(toch6);
+	counter-increment: toch6;
+}
+.tableOfContents > ul > ul > ul > ul > ul > ul > ul > li:before {
+	content: counter(toch1) "." counter(toch2) "." counter(toch3) "." counter(toch4) "." counter(toch5) "." counter(toch6) "." counter(toch7);
+	counter-increment: toch7;
+}

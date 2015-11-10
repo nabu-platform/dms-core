@@ -1,0 +1,46 @@
+blockquote:before {
+	counter-reset: lines;
+}
+blockquote {
+	font-family: Monospace !important;
+	border: solid 1px #CCCCCC;
+	margin: 5px 20px;
+	padding: 10px;
+	background-color: rgba(250,250,250,0.6);
+}
+blockquote * {
+	font-family: Monospace !important;
+}
+
+blockquote code {
+	background-color: #333333;
+	color: #FAFAFA;
+}
+
+span.line:before {
+	content: counter(lines); /*counter(lines, decimal-leading-zero);*/
+	display: inline-block;
+	width: 3em;
+	text-align: right;
+	margin-right: 10px;
+	padding: 0px 5px;
+	background-color: #FDFDFD;
+	border: solid 1px #CCCCCC;
+	border-style: none solid none none;
+	font-weight: bold;
+	color: #666666;
+}
+span.line {
+	counter-increment: lines;
+}
+span.line:hover {
+	background-color: #F0F0F0;
+}
+span.line:hover:before{
+	background-color: #CCCCCC;
+	color: #000000;
+}
+
+hr {
+	display: none;
+}
