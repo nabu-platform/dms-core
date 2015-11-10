@@ -43,7 +43,7 @@ public class WikiToDXF implements Converter {
 	
 	@Override
 	public void convert(DocumentManager repository, File file, OutputStream output, Map<String, String> properties) throws IOException, FormatException {
-		logger.debug("Converting file '" + file.getPath() + "'");
+		logger.debug("Converting file '" + file + "'");
 		String content = FileUtils.toString(file, "UTF-8").replaceAll("\r", "");
 		
 		// find all the "quoted" parts, they have to be processed afterwards
