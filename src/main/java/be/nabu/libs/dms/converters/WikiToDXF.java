@@ -522,7 +522,7 @@ public class WikiToDXF implements Converter {
 			return content;
 		// strip the block
 		content = content.substring(annotationBlock.length());
-		annotationBlock = annotationBlock.replaceAll("(?m)^[\\s]*@([^=\\s]+)[\\s=]*(.*)$", "<meta name='$1' content='$2'/>").replaceAll("\n", ""); 
+		annotationBlock = annotationBlock.replaceAll("(?m)^[\\s]*@([^=\\s]+)[\\s=]*(.*)$", "<meta name=\"$1\" content=\"$2\"/>").replaceAll("\n", ""); 
 		return annotationBlock + content;
 	}
 	

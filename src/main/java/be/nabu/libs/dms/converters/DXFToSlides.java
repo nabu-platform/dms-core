@@ -1,6 +1,8 @@
 package be.nabu.libs.dms.converters;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -27,7 +30,9 @@ public class DXFToSlides extends DXFConverter {
 
 	public static final String HTML_SLIDE_CONTENT_TYPE = "application/html+slides";
 	
-	private static List<String> transitions = Arrays.asList(new String [] { "default", "cube", "page", "concave", "zoom", "linear", "fade", "none" });
+	// previous version
+//	private static List<String> transitions = Arrays.asList(new String [] { "default", "cube", "page", "concave", "zoom", "linear", "fade", "none" });
+	private static List<String> transitions = Arrays.asList(new String [] { "none", "fade", "slide", "convex", "concave", "zoom" });
 	
 	@Override
 	public void convert(DocumentManager documentManager, File file, OutputStream output, Map<String, String> properties) throws IOException, FormatException {
@@ -37,13 +42,15 @@ public class DXFToSlides extends DXFConverter {
 		String [] fragmentedTags = properties != null && properties.containsKey("fragment") ? properties.get("fragment").split("[\\s]*,[\\s]*") : null;
 
 		// some of the options
-		String transition = properties != null && properties.containsKey("transition") && transitions.contains(properties.get("transition")) ? properties.get("transition") : "cube";
+		String transition = properties != null && properties.containsKey("transition") && transitions.contains(properties.get("transition")) ? properties.get("transition") : "slide";
 		// mouseWheel is disabled by default because slides will regularly be larger then the screen so we need the scroll to actually scroll down
 		boolean mouseWheel = properties != null && properties.containsKey("mouseWheel") && properties.get("mouseWheel").equals("true");
 		// for more options, see https://github.com/hakimel/reveal.js#configuration
 		
 		// allow for additional styling
 		String additionalStyle = properties != null && properties.containsKey("style") ? properties.get("style") : null;
+		
+		boolean generateTitlePages = properties != null && "true".equals(properties.get("titlePages"));
 		
 		String content = FileUtils.toString(file, "UTF-8").trim();
 		
@@ -65,11 +72,36 @@ public class DXFToSlides extends DXFConverter {
 				content = content.replaceAll("(<" + fragmentedTag + "\\b)", "$1 class='fragment'");
 		}
 		
-		pattern = Pattern.compile("(?s)<h(1|2)[^>]*>(.*?)</h(1|2)>");
-		matcher = pattern.matcher(content);
 		// a null section indicates a title page that has to be generated
 		List<String> sections = new ArrayList<String>();
-
+		
+		// find annotations
+		Map<String, String> annotations = new HashMap<String, String>();
+		pattern = Pattern.compile("<meta([^>]+)>");
+		matcher = pattern.matcher(content);
+		while (matcher.find()) {
+			String name = matcher.group(1).replaceAll(".*name[\\s]*=[\\s]*\"(.*?)\".*", "$1");
+			String value = matcher.group(1).replaceAll(".*content[\\s]*=[\\s]*\"(.*?)\".*", "$1");
+			annotations.put(name, value);
+			content = content.replace(matcher.group(), "");
+		}
+		content = content.trim();
+		// there is a title page
+		if (annotations.containsKey("title")) {
+			String titleContent = "<section class='title'><h1>" + annotations.get("title") + "</h1>";
+			if (annotations.containsKey("subtitle")) {
+				titleContent += "<h2>" + annotations.get("subtitle") + "</h2>";
+			}
+			if (annotations.containsKey("author")) {
+				titleContent += "<p>" + annotations.get("author") + "</p>";
+			}
+			titleContent += "</section>";
+			sections.add(titleContent);
+		}
+		
+		pattern = Pattern.compile("(?s)<h(1|2)[^>]*>(.*?)</h(1|2)>");
+		matcher = pattern.matcher(content);
+		
 		// this keeps track of all the titles in order, afterwards title pages will be generated
 		List<String> headers = new ArrayList<String>();
 		int previousIndex = 0;
@@ -82,7 +114,9 @@ public class DXFToSlides extends DXFConverter {
 			}
 			previousIndex = matcher.end();
 			// add an empty section to indicate a header page
-			sections.add(null);
+			if (generateTitlePages) {
+				sections.add(null);
+			}
 		}
 		// add the last bit (if any)
 		if (previousIndex < content.length()) {
@@ -124,7 +158,22 @@ public class DXFToSlides extends DXFConverter {
 			IOUtils.copyBytes(IOUtils.wrap(("<html><head><title>Slides: " + file.getName() + "</title><style>").getBytes("UTF-8"), true), IOUtils.wrap(output));
 			// write stylesheets
 			IOUtils.copyBytes(IOUtils.wrap(Thread.currentThread().getContextClassLoader().getResourceAsStream("slides/reveal.css")), IOUtils.wrap(output));
-			IOUtils.copyBytes(IOUtils.wrap(Thread.currentThread().getContextClassLoader().getResourceAsStream("slides/theme.custom.css")), IOUtils.wrap(output));
+			String theme = annotations.containsKey("theme") ? annotations.get("theme") : "custom";
+			InputStream input;
+			java.io.File themeFile = new java.io.File("themes/" + theme + ".css");
+			if (themeFile.isFile()) {
+				input = new FileInputStream(themeFile);
+			}
+			else {
+				input = Thread.currentThread().getContextClassLoader().getResourceAsStream("slides/theme." + theme + ".css");
+			}
+			if (input == null) {
+				throw new RuntimeException("The theme '" + theme + "' was not found, please add it to the themes folder (" + new java.io.File("themes").getAbsolutePath() + ")");
+			}
+			else {
+				input = new BufferedInputStream(input);
+			}
+			IOUtils.copyBytes(IOUtils.wrap(input), IOUtils.wrap(output));
 			if (additionalStyle != null) {
 				IOUtils.copyBytes(IOUtils.wrap(additionalStyle.getBytes("UTF-8"), true), IOUtils.wrap(output));
 			}
@@ -139,6 +188,7 @@ public class DXFToSlides extends DXFConverter {
 		}
 		// write closing divs and fix script
 		IOUtils.copyBytes(IOUtils.wrap(("</div></div>").getBytes("UTF-8"), true), IOUtils.wrap(output));
+		
 		
 		if (!embedded) {
 			IOUtils.copyBytes(IOUtils.wrap(("<script>").getBytes("UTF-8"), true), IOUtils.wrap(output));
