@@ -158,7 +158,7 @@ public class DXFToSlides extends DXFConverter {
 			IOUtils.copyBytes(IOUtils.wrap(("<html><head><title>Slides: " + file.getName() + "</title><style>").getBytes("UTF-8"), true), IOUtils.wrap(output));
 			// write stylesheets
 			IOUtils.copyBytes(IOUtils.wrap(Thread.currentThread().getContextClassLoader().getResourceAsStream("slides/reveal.css")), IOUtils.wrap(output));
-			String theme = annotations.containsKey("theme") ? annotations.get("theme") : "custom";
+			String theme = annotations.containsKey("theme") ? annotations.get("theme") : System.getProperty("slides.theme", "custom");
 			InputStream input;
 			java.io.File themeFile = new java.io.File("themes/" + theme + ".css");
 			if (themeFile.isFile()) {
