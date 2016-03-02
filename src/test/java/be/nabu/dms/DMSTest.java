@@ -47,7 +47,7 @@ public class DMSTest extends TestCase {
 		converter.convert(manager, file, output, null);
 		System.out.println(new String(output.toByteArray()));
 		assertEquals(
-				"<meta name='tags' content='something'/><h1>This is a test</h1><h2>What kind of a test?</h2><p>The <b>good</b> kind.</p>",
+				"<meta name=\"tags\" content=\"something\"/><h1>This is a test</h1><h2>What kind of a test?</h2><p>The <b>good</b> kind.</p>",
 				new String(output.toByteArray())
 		);
 	}
