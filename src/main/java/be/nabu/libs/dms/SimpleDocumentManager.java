@@ -11,6 +11,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.nabu.libs.datastore.api.WritableDatastore;
 import be.nabu.libs.dms.api.Converter;
 import be.nabu.libs.dms.api.ConverterResolver;
 import be.nabu.libs.dms.api.DocumentCacheManager;
@@ -25,6 +26,7 @@ public class SimpleDocumentManager implements DocumentManager {
 	
 	private ConverterResolver converterResolver;
 	private DocumentCacheManager cacheManager;
+	private WritableDatastore datastore;
 	
 	/**
 	 * The maximum size a file can be while still being cached. If bigger, the file is never cached
@@ -110,5 +112,13 @@ public class SimpleDocumentManager implements DocumentManager {
 	public List<String> getCacheContentTypes() {
 		return cacheContentTypes;
 	}
-	
+
+	@Override
+	public WritableDatastore getDatastore(File file) {
+		return datastore == null ? new FileDatastore(file) : datastore;
+	}
+
+	public void setDatastore(WritableDatastore datastore) {
+		this.datastore = datastore;
+	}
 }

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.URI;
 import java.net.URL;
 import java.net.Proxy.Type;
 import java.net.URLConnection;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import be.nabu.libs.datastore.api.WritableDatastore;
 import be.nabu.libs.dms.FileUtils;
 import be.nabu.libs.dms.api.Converter;
 import be.nabu.libs.dms.api.DocumentManager;
@@ -36,47 +38,28 @@ public class EHTMLToDXF implements Converter {
 		html = html.replaceAll("      ", "\t");
 		html = html.replaceAll("&nbsp;", " ");
 		// externalize embedded images
-		html = unembedImages(file, html);
+		html = unembedImages(documentManager, file, html);
 		
 		IOUtils.copyBytes(IOUtils.wrap(new ByteArrayInputStream(html.getBytes("UTF-8"))), IOUtils.wrap(output));
 	}
 
-	private String unembedImages(File file, String content) throws IOException {
+	private String unembedImages(DocumentManager documentManager, File file, String content) throws IOException {
 		Pattern pattern = Pattern.compile("(<img[^>]+?src[\\s='\"]+)([^'\"]+)('|\")([^>]+)>");
 		Matcher matcher = pattern.matcher(content);
 		while (matcher.find()) {
+			// already stored
+			if (matcher.group().matches("(?s).*reference=\".*")) {
+				continue;
+			}
 			String src = matcher.group().replaceAll(pattern.pattern(), "$2");
 			if (src.startsWith("data:") || src.startsWith("http:") || src.startsWith("https:")) {
-				File target = file.getParent().resolve(".resources");
-				if (!target.exists()) {
-					target.mkdir();
-				}
-				String fileName = null;
-				if (matcher.group().matches("(?i).*alt[\\s]*=[\\s]*.*")) {
-					String alt = matcher.group().replaceAll("(?i).*alt[\\s='\"]+([^'\"]+).*", "$1");
-					if (!alt.equals(matcher.group()) && !alt.isEmpty()) {
-						// if it's a URI, remove everything before the last slash
-						// also make sure you only use simple characters
-						fileName = alt.replaceAll(".*/", "").replaceAll("[^\\w.]+", "_");
-					}
-				}
 				String mimeType = src.startsWith("data:") 
 					? src.replaceAll("^data:([^;]+).*", "$1")
 					: ContentTypeMap.getInstance().getContentTypeFor(src);
 				if (mimeType == null) {
 					throw new IllegalArgumentException("Unsupported image format");
 				}
-				String extension = ContentTypeMap.getInstance().getExtensionFor(mimeType);
-				if (fileName != null && !fileName.endsWith("." + extension)) {
-					fileName += "." + extension;
-				}
-				int counter = 0;
-				// make sure it's unique
-				while (fileName == null || target.resolve(fileName).exists()) {
-					fileName = fileName == null 
-						? "unnamed" + counter++ + "." + extension
-						: fileName.replaceFirst("^([^.0-9]+)[0-9]*", "$1" + counter++);
-				}
+				
 				byte [] bytes;
 				if (src.startsWith("data:")) {
 					String encoding = src.replaceAll("^data:[^;]+;([^,]+).*", "$1").toLowerCase();
@@ -104,14 +87,20 @@ public class EHTMLToDXF implements Converter {
 						inputStream.close();
 					}
 				}
-				OutputStream output = target.resolve(fileName).getOutputStream();
-				try {
-					output.write(bytes);
+				
+				String fileName = null;
+				if (matcher.group().matches("(?i).*alt[\\s]*=[\\s]*.*")) {
+					String alt = matcher.group().replaceAll("(?i).*alt[\\s='\"]+([^'\"]+).*", "$1");
+					if (!alt.equals(matcher.group()) && !alt.isEmpty()) {
+						// if it's a URI, remove everything before the last slash
+						// also make sure you only use simple characters
+						fileName = alt.replaceAll(".*/", "").replaceAll("[^\\w.]+", "_");
+					}
 				}
-				finally {
-					output.close();
-				}
-				content = content.replaceAll(Pattern.quote(matcher.group()), "<link href=\".resources/" + fileName + "\" reference=\".resources/" + fileName + "\"/>");
+
+				WritableDatastore datastore = documentManager.getDatastore(file);
+				URI uri = datastore.store(new ByteArrayInputStream(bytes), fileName, mimeType);
+				content = content.replaceAll(Pattern.quote(matcher.group()), "<link href=\".resources/" + fileName + "\" reference=\"" + uri.toString() + "\"/>");
 			}
 		}
 		return content;

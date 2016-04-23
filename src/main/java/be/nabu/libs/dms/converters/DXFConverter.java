@@ -2,6 +2,7 @@ package be.nabu.libs.dms.converters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
@@ -14,12 +15,14 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.nabu.libs.datastore.api.DataProperties;
 import be.nabu.libs.dms.MemoryFileFragment;
 import be.nabu.libs.dms.api.Converter;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
 import be.nabu.libs.resources.URIUtils;
 import be.nabu.libs.vfs.api.File;
+import be.nabu.utils.io.IOUtils;
 
 abstract public class DXFConverter implements Converter {
 	
@@ -68,21 +71,37 @@ abstract public class DXFConverter implements Converter {
 			catch (URISyntaxException e) {
 				throw new FormatException("The link " + url + " is not of a valid format", e);
 			}
-			// just get the path part for the link
-			String link = uri.getPath();
-			
+
 			// any parameters
 			Map<String, String> properties = WikiToDXF.flatten(URIUtils.getQueryProperties(uri));
 			if (originalProperties != null) {
 				properties.putAll(originalProperties);
 			}
 			
-			logger.debug("Resolving link '" + link + "' from file " + file.getPath());
-			File linkedFile = file.getParent().resolve(link);
-			logger.debug("Resolving link '" + link + "' against '" + file.getParent().getPath() + "': " + linkedFile.exists());
+			File linkedFile;
+			if (uri.getScheme() != null) {
+				byte[] bytes;
+				DataProperties dataProperties = repository.getDatastore(file).getProperties(uri);
+				InputStream retrieve = repository.getDatastore(file).retrieve(uri);
+				try {
+					bytes = IOUtils.toBytes(IOUtils.wrap(retrieve));
+				}
+				finally {
+					retrieve.close();
+				}
+				linkedFile = new MemoryFileFragment(file, bytes, dataProperties.getName(), dataProperties.getContentType());
+			}
+			else {
+				// just get the path part for the link
+				String link = uri.getPath();
+				
+				
+				logger.debug("Resolving link '" + link + "' from file " + file.getPath());
+				linkedFile = file.getParent().resolve(link);
+				logger.debug("Resolving link '" + link + "' against '" + file.getParent().getPath() + "': " + linkedFile.exists());
+			}
 						
 			if (linkedFile.exists()) {
-				link = linkedFile.getPath();
 				Converter converter = repository.getConverter(linkedFile.getContentType(), toContentType);
 				logger.debug("Converting " + linkedFile.getPath() + " / " + linkedFile.getContentType() + " to " + toContentType + " using converter: " + converter);
 				if (converter == null)
@@ -128,7 +147,7 @@ abstract public class DXFConverter implements Converter {
 			}
 			else
 				content = content.replaceFirst(Pattern.quote(matcher.group()),
-					Matcher.quoteReplacement("<span reference='" + url + "' class='bad'>failed to import <a class='internal' exists='false' href='" + link + "'>" + link + "</a></span>"));
+					Matcher.quoteReplacement("<span reference='" + url + "' class='bad'>failed to import <a class='internal' exists='false' href='" + url + "'>" + url + "</a></span>"));
 		}
 		return content;
 	}
