@@ -49,8 +49,8 @@ public class DXFToHTML extends DXFConverter {
 			}
 		}
 		else {
-			String downloadPath = properties.get("downloadPath");
-			String viewPath = properties.get("viewPath");
+			String downloadPath = properties == null ? null : properties.get("downloadPath");
+			String viewPath = properties == null ? null : properties.get("viewPath");
 			content = content.replaceAll("(?s)(href|src)([\\s'\"=]+)" + Pattern.quote(SCHEME_LINK) + ":", "$1$2/" + (viewPath == null ? "view" : viewPath));
 			content = content.replaceAll("(?s)(href|src)([\\s'\"=]+)" + Pattern.quote(SCHEME_STREAM) + ":", "$1$2/" + (downloadPath == null ? "download" : downloadPath));
 		}
