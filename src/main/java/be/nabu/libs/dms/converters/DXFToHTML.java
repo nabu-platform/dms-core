@@ -49,8 +49,10 @@ public class DXFToHTML extends DXFConverter {
 			}
 		}
 		else {
-			content = content.replaceAll("(?s)(href|src)([\\s'\"=]+)" + Pattern.quote(SCHEME_LINK) + ":", "$1$2/view");
-			content = content.replaceAll("(?s)(href|src)([\\s'\"=]+)" + Pattern.quote(SCHEME_STREAM) + ":", "$1$2/download");
+			String downloadPath = properties.get("downloadPath");
+			String viewPath = properties.get("viewPath");
+			content = content.replaceAll("(?s)(href|src)([\\s'\"=]+)" + Pattern.quote(SCHEME_LINK) + ":", "$1$2/" + (viewPath == null ? "view" : viewPath));
+			content = content.replaceAll("(?s)(href|src)([\\s'\"=]+)" + Pattern.quote(SCHEME_STREAM) + ":", "$1$2/" + (downloadPath == null ? "download" : downloadPath));
 		}
 		
 		IOUtils.copyBytes(IOUtils.wrap(new ByteArrayInputStream(content.getBytes("UTF-8"))), IOUtils.wrap(output));
