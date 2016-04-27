@@ -89,7 +89,13 @@ abstract public class DXFConverter implements Converter {
 				finally {
 					retrieve.close();
 				}
-				linkedFile = new MemoryFileFragment(file, bytes, dataProperties.getName(), dataProperties.getContentType());
+				final String path = uri.toString();
+				linkedFile = new MemoryFileFragment(file, bytes, URIUtils.getName(uri), dataProperties.getContentType()) {
+					@Override
+					public String getPath() {
+						return path;
+					}
+				};
 			}
 			else {
 				// just get the path part for the link

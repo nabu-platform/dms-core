@@ -10,6 +10,7 @@ import java.util.Map;
 import be.nabu.libs.dms.api.Converter;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
+import be.nabu.libs.resources.URIUtils;
 import be.nabu.libs.vfs.api.File;
 import be.nabu.utils.io.IOUtils;
 
@@ -20,7 +21,9 @@ public class ImageToDXF implements Converter {
 		String title = properties != null && properties.containsKey("title") ? properties.get("title") : file.getPath();
 		String alt = properties != null && properties.containsKey("alt") ? properties.get("alt") : title;
 		String css = properties != null && properties.containsKey("float") ? "style='float:" + properties.get("float") + "' " : "";
-		String image = "<img src=\"" + SCHEME_STREAM + ":" + file.getPath() + "\"" + css + " reference=\"" + file.getPath() + "\" title=\"" + title + "\" alt=\"" + alt + "\"";
+		// encode the path if it contains a scheme
+		String path = file.getPath().matches("^[\\w]+:.*") ? URIUtils.encodeURIComponent(file.getPath()) : file.getPath();
+		String image = "<img src=\"" + SCHEME_STREAM + ":" + path + "\"" + css + " reference=\"" + file.getPath() + "\" title=\"" + title + "\" alt=\"" + alt + "\"";
 		if (properties != null) {
 			if (properties.containsKey("width"))
 				image += " width=\"" + properties.get("width") + "\"";
