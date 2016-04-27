@@ -301,10 +301,13 @@ public class WikiToDXF implements Converter {
 			if (text.trim().matches("\\[:([^\\]]+)\\]") || text.trim().matches("\\[quote=[^\\]]+\\]"))
 				content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement(text.trim()));
 			// headers, tables, images, ... shouldn't be encapsulated in a paragraph (only text and text with font styling)
-			else if (text.trim().startsWith("<") && !text.trim().matches("^<(del|sub|sup|code|strong|b>|u>|i>).*"))
+			else if (text.trim().startsWith("<") && !text.trim().matches("^<(del|sub|sup|code|strong|cite|b>|u>|i>).*"))
 				content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement(text.trim()));
 			// if you have a strong statement which is in a paragraph of its own, encapsulate it in a div to break it out of the inline context
 			else if (text.trim().startsWith("<strong") && text.trim().endsWith("</strong>"))
+				content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<p class='message'>" + text.trim() + "</p>"));
+			// same for cite
+			else if (text.trim().startsWith("<cite") && text.trim().endsWith("</cite>"))
 				content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<p class='message'>" + text.trim() + "</p>"));
 			// a page break must stand alone
 			else if (text.trim().equals("--"))
