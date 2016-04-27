@@ -344,6 +344,8 @@ public class WikiToDXF implements Converter {
 		content = styleText(content, "@", "code");
 		// create "important" quote !..! (for text with word boundaries and no tabs or linefeeds)
 		content = styleText(content, "!", "strong");
+		// for texts
+		content = styleText(content, "?", "cite");
 		// create striked through text ~..~
 		content = styleText(content, "~", "del");
 		// create inserted text
