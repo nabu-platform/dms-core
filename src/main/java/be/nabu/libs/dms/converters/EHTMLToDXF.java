@@ -21,6 +21,7 @@ import be.nabu.libs.dms.FileUtils;
 import be.nabu.libs.dms.api.Converter;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
+import be.nabu.libs.resources.URIUtils;
 import be.nabu.libs.vfs.api.File;
 import be.nabu.utils.codec.TranscoderUtils;
 import be.nabu.utils.codec.impl.Base64Decoder;
@@ -100,7 +101,7 @@ public class EHTMLToDXF implements Converter {
 
 				WritableDatastore datastore = documentManager.getDatastore(file);
 				URI uri = datastore.store(new ByteArrayInputStream(bytes), fileName, mimeType);
-				content = content.replaceAll(Pattern.quote(matcher.group()), "<link href=\".resources/" + fileName + "\" reference=\"" + uri.toString() + "\"/>");
+				content = content.replaceAll(Pattern.quote(matcher.group()), "<link href=\"" + uri.toString() + "\" reference=\"" + uri.toString() + "\"/>");
 			}
 		}
 		return content;
