@@ -67,6 +67,7 @@ public class WikiToDXF implements Converter {
 		content = replaceStyling(content);
 		content = replaceParagraphs(content);
 		content = replaceExternalLinks(content);
+		content = replaceEmbeddedLinks(content);
 		content = replaceAnchorLinks(content);
 		content = replaceLocalLinks(file, content);
 		content = replaceAnchors(content);
@@ -288,6 +289,22 @@ public class WikiToDXF implements Converter {
 			if (displayName.length() == 0)
 				displayName = link;
 			content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<a rel='nofollow' class='external' href='" + link + "'>" + displayName + "</a>"));
+		}
+		return content;
+	}
+	
+	/**
+	 * Format: [^url]
+	 * This replaces embedded links
+	 */
+	public String replaceEmbeddedLinks(String content) {
+		Pattern pattern = Pattern.compile("(?<!\\\\)\\[\\^([\\w]+:/[^\\]]+)\\]");
+		Matcher matcher = pattern.matcher(content);
+		System.out.println(">>> REPLACING EMBEDDED: " + content);
+		while(matcher.find()) {
+			String link = matcher.group().replaceAll(pattern.pattern(), "$1");
+			System.out.println("FOUND LINK: " + link);
+			content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<iframe style='margin-left: 10%' src='" + link + "' width='80%' height='450' frameborder='0' allowfullscreen></iframe>"));
 		}
 		return content;
 	}

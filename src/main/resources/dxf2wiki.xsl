@@ -311,4 +311,8 @@
 		<!-- <xsl:call-template name="lf"/> --><xsl:call-template name="lf"/><xsl:apply-templates/><xsl:call-template name="lf"/><!-- <xsl:call-template name="lf"/> -->
 	</xsl:template>
 	
+	<xsl:template match="iframe">
+		<xsl:call-template name="lf"/><xsl:call-template name="lf"/><xsl:text>[></xsl:text><xsl:value-of select="@src"/><xsl:text>]</xsl:text><xsl:call-template name="lf"/><xsl:call-template name="lf"/>
+	</xsl:template>
+	
 </xsl:stylesheet>
