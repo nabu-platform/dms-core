@@ -300,10 +300,8 @@ public class WikiToDXF implements Converter {
 	public String replaceEmbeddedLinks(String content) {
 		Pattern pattern = Pattern.compile("(?<!\\\\)\\[\\^([\\w]+:/[^\\]]+)\\]");
 		Matcher matcher = pattern.matcher(content);
-		System.out.println(">>> REPLACING EMBEDDED: " + content);
 		while(matcher.find()) {
 			String link = matcher.group().replaceAll(pattern.pattern(), "$1");
-			System.out.println("FOUND LINK: " + link);
 			content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<iframe style='margin-left: 10%' src='" + link + "' width='80%' height='450' frameborder='0' allowfullscreen></iframe>"));
 		}
 		return content;
