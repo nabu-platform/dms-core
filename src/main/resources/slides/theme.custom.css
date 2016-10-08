@@ -19,9 +19,13 @@ body {
 
 .reveal {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-size: 38px;
+  font-size: 32px;
   font-weight: normal;
   color: rgba(0, 0, 0, 0.68); }
+
+.reveal ul {
+	width: 80%;
+}
 
 ::selection {
   color: #fff;
@@ -64,7 +68,7 @@ body {
 .reveal h4,
 .reveal h5,
 .reveal h6 {
-  margin: 0 0 20px 0;
+  margin: 20px 0 20px 0;
   color: #035274;
   font-family: "Source Sans Pro", Helvetica, sans-serif;
   font-weight: 600;

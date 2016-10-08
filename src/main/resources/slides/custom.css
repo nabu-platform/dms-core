@@ -2,10 +2,10 @@
 	color: #cd65aa;
 }
 .code-string {
-	color: #c4c4ff;
+	color: #8787ff;
 }
 .code-comment {
-	color: #8ed7b3;
+	color: #31875d;
 }
 .xml-element {
 	color: #00eaea;
@@ -18,7 +18,7 @@
 	color: #AAAAAA !important;
 }
 .code-method {
-	color: #00eaea;	
+	color: #00b7b7;	
 }
 .code-assign {
 	color: #df52df;	
@@ -38,6 +38,7 @@
 .reveal blockquote, .reveal blockquote * {
 	font-family: Monospace !important;
 	font-size: 12pt !important;
+	text-align: left;
 }
 
 strong {
@@ -45,3 +46,11 @@ strong {
 	color: #7c0707;
 	padding: 0px 5px !important;
 }
+
+.reveal code {
+	border: solid 1px #CCCCCC !important;
+	border-style: none none dashed none !important;
+	font-size: inherit !important;
+	background-color: #EAEAEA;
+}
+
