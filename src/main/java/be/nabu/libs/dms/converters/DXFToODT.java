@@ -36,9 +36,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import be.nabu.libs.dms.FileUtils;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
+import be.nabu.libs.dms.utils.FileUtils;
 import be.nabu.libs.resources.URIUtils;
 import be.nabu.libs.vfs.api.File;
 import be.nabu.utils.io.ContentTypeMap;

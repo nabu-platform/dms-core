@@ -7,10 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import be.nabu.libs.dms.FileUtils;
 import be.nabu.libs.dms.api.Converter;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
+import be.nabu.libs.dms.utils.FileUtils;
 import be.nabu.libs.vfs.api.File;
 import be.nabu.utils.io.IOUtils;
 

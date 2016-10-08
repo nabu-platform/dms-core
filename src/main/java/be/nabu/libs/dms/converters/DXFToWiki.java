@@ -19,10 +19,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import be.nabu.libs.dms.FileUtils;
 import be.nabu.libs.dms.api.Converter;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
+import be.nabu.libs.dms.utils.FileUtils;
 import be.nabu.libs.resources.URIUtils;
 import be.nabu.libs.vfs.api.File;
 import be.nabu.utils.io.IOUtils;

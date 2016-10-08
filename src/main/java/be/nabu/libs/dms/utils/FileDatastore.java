@@ -1,4 +1,4 @@
-package be.nabu.libs.dms;
+package be.nabu.libs.dms.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

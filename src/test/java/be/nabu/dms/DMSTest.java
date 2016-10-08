@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import be.nabu.libs.dms.SimpleDocumentManager;
 import be.nabu.libs.dms.api.Converter;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
 import be.nabu.libs.dms.converters.WikiToDXF;
+import be.nabu.libs.dms.utils.SimpleDocumentManager;
 import be.nabu.libs.events.EventDispatcherFactory;
 import be.nabu.libs.vfs.api.File;
 import be.nabu.libs.vfs.api.FileSystem;

@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import be.nabu.libs.dms.FileUtils;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
+import be.nabu.libs.dms.utils.FileUtils;
 import be.nabu.libs.vfs.api.File;
 import be.nabu.utils.io.IOUtils;
 
