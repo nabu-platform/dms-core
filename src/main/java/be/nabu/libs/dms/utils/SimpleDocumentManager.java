@@ -82,7 +82,7 @@ public class SimpleDocumentManager implements DocumentManager {
 		if (converter == null)
 			throw new IllegalArgumentException("Can not convert " + file.getContentType() + " to " + toContentType + ", no converter exists");
 		
-		if (properties == null && cacheManager != null && (cacheSizeLimit <= 0 || file.getSize() < cacheSizeLimit) && (cacheContentTypes.size() == 0 || cacheContentTypes.contains(toContentType))) {
+		if (cacheManager != null && (cacheSizeLimit <= 0 || file.getSize() < cacheSizeLimit) && (cacheContentTypes.size() == 0 || cacheContentTypes.contains(toContentType))) {
 			logger.debug("Cache miss for {} to " + toContentType, file);
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 			converter.convert(this, file, buffer, properties);
