@@ -27,7 +27,7 @@ public class MarkdownToDXF extends WikiToDXF {
 	 */
 	@Override
 	public String replaceExternalLinks(String content) {
-		Pattern pattern = Pattern.compile("(?<!\\\\)\\[([^|\\]]*)\\][\\s]*\\(([\\w]+:[^)]+)\\)");
+		Pattern pattern = Pattern.compile("(?<!\\\\)\\[([^|\\]]*)\\][\\s]*\\(([\\w]+:[^)]+|/[^)]+)\\)");
 		Matcher matcher = pattern.matcher(content);
 		while(matcher.find()) {
 			String displayName = matcher.group().replaceAll(pattern.pattern(), "$1");
