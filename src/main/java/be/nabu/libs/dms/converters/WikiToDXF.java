@@ -58,7 +58,8 @@ public class WikiToDXF implements Converter {
 
 		// preprocessing
 		content = escapeXML(content);
-		content = replaceAnnotations(content);
+		
+		content = replaceAnnotations(content, properties == null || properties.get("annotationDelimiter") == null ? "@" : properties.get("annotationDelimiter"));
 		
 		// converting
 		content = replaceHeaders(content);
@@ -535,14 +536,14 @@ public class WikiToDXF implements Converter {
 	 * @param content
 	 * @return
 	 */
-	public String replaceAnnotations(String content) {
-		String annotationBlock = content.replaceAll("(?s)^([\\s]*@.*?)[\n]+(?!@).*", "$1");
+	public String replaceAnnotations(String content, String delimiter) {
+		String annotationBlock = content.replaceAll("(?s)^([\\s]*" + Pattern.quote(delimiter) + ".*?)[\n]+(?!" + Pattern.quote(delimiter) + ").*", "$1");
 		// no annotations found
-		if (!annotationBlock.trim().startsWith("@"))
+		if (!annotationBlock.trim().startsWith(delimiter))
 			return content;
 		// strip the block
 		content = content.substring(annotationBlock.length());
-		annotationBlock = annotationBlock.replaceAll("(?m)^[\\s]*@([^=\\s]+)[\\s=]*(.*)$", "<meta name=\"$1\" content=\"$2\"/>").replaceAll("\n", ""); 
+		annotationBlock = annotationBlock.replaceAll("(?m)^[\\s]*" + Pattern.quote(delimiter) + "([^=\\s]+)[\\s=]*(.*)$", "<meta name=\"$1\" content=\"$2\"/>").replaceAll("\n", ""); 
 		return annotationBlock + content;
 	}
 	

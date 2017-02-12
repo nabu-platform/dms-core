@@ -36,7 +36,7 @@ public class WikiToEHTML extends WikiToDXF {
 		}
 
 		content = escapeXML(content);
-		content = replaceAnnotations(content);
+		content = replaceAnnotations(content, properties == null || properties.get("annotationDelimiter") == null ? "@" : properties.get("annotationDelimiter"));
 		
 		// perform a subset of the wiki transforms
 		content = replaceHeaders(content);
