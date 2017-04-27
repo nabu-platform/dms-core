@@ -171,6 +171,7 @@ public class CodeToHTML implements Converter {
 				"text/x-java-source",
 				"text/x-c",
 				"application/x-javascript",
+				"application/json",
 				"text/x-script.python",
 				"text/x-script.glue",
 				"text/x-script.scheme",
