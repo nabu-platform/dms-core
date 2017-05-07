@@ -34,7 +34,7 @@ public class MarkdownToDXF extends WikiToDXF {
 			String link = matcher.group().replaceAll(pattern.pattern(), "$2");
 			if (displayName.length() == 0)
 				displayName = link;
-			content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<a rel='nofollow' class='external' href='" + link + "'>" + displayName + "</a>"));
+			content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<a rel='noopener noreferrer nofollow' class='external' href='" + link + "'>" + displayName + "</a>"));
 		}
 		return content;
 	}
