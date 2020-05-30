@@ -81,7 +81,6 @@ public class SimpleDocumentManager implements DocumentManager {
 		Converter converter = converterResolver.getConverter(file.getContentType(), toContentType);
 		if (converter == null)
 			throw new IllegalArgumentException("Can not convert " + file.getContentType() + " to " + toContentType + ", no converter exists");
-		
 		if (cacheManager != null && (cacheSizeLimit <= 0 || file.getSize() < cacheSizeLimit) && (cacheContentTypes.size() == 0 || cacheContentTypes.contains(toContentType))) {
 			logger.debug("Cache miss for {} to " + toContentType, file);
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();

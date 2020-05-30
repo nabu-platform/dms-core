@@ -32,6 +32,9 @@ public class SPIConverterResolver implements ConverterResolver {
 	
 	@Override
 	public Converter getConverter(String fromContentType, String toContentType) {
+		if (fromContentType.equals(toContentType)) {
+			return new PassThroughConverter(fromContentType, toContentType);
+		}
 		// can not find any converters that start with this type
 		if (!converters.containsKey(fromContentType))
 			return null;

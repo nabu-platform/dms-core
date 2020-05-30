@@ -68,7 +68,7 @@ public class WikiToDXF implements Converter {
 		content = replaceStyling(content);
 		content = replaceParagraphs(content);
 		content = replaceExternalLinks(content);
-		content = replaceEmbeddedLinks(content);
+		content = replaceEmbeddedLinks(content, file);
 		content = replaceAnchorLinks(content);
 		content = replaceLocalLinks(file, content);
 		content = replaceAnchors(content);
@@ -298,12 +298,39 @@ public class WikiToDXF implements Converter {
 	 * Format: [^url]
 	 * This replaces embedded links
 	 */
-	public String replaceEmbeddedLinks(String content) {
-		Pattern pattern = Pattern.compile("(?<!\\\\)\\[\\^([\\w]+:/[^\\]]+)\\]");
+	public String replaceEmbeddedLinks(String content, File file) {
+		Pattern pattern = Pattern.compile("(?<!\\\\)\\[\\^([^\\]]+)\\]");
 		Matcher matcher = pattern.matcher(content);
 		while(matcher.find()) {
 			String link = matcher.group().replaceAll(pattern.pattern(), "$1");
-			content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<iframe style='margin-left: 10%' src='" + link + "' width='80%' height='450' frameborder='0' allowfullscreen></iframe>"));
+			if (!link.startsWith("http:") && !link.startsWith("https:")) {
+				File resolve = null;
+				try {
+					resolve = file.getParent().resolve(link);
+					if (!resolve.exists()) {
+						content = content.replaceFirst(Pattern.quote(matcher.group()),
+								Matcher.quoteReplacement("<span reference='" + link + "' class='bad'>failed to import <a class='internal' exists='false' href='" + link + "'>" + link + "</a></span>"));
+					}
+					else {
+						content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<video controls frameborder='0' allowfullscreen><source src='" + SCHEME_STREAM + ":" + resolve.getPath() + "' type='" + resolve.getContentType() + "'/></video>"));
+					}
+				}
+				catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			else {
+				if (link.contains("://www.youtube.com") || link.contains("://youtu.be")) {
+					// original: https://www.youtube.com/watch?v=abc
+					// becomes: https://www.youtube.com/embed/abc
+					link = link.replace("watch?v=", "embed/");
+					
+					// original: https://youtu.be/DIlgZYMIVUs
+					// becomes: https://www.youtube.com/embed/abc
+					link = link.replace("youtu.be", "www.youtube.com/embed");
+				}
+				content = content.replaceFirst(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<iframe style='margin-left: 10%' src='" + link + "' width='80%' height='450' frameborder='0' allowfullscreen></iframe>"));
+			}
 		}
 		return content;
 	}
