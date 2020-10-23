@@ -179,7 +179,8 @@ public class CodeToHTML implements Converter {
 				"text/x-script.tcl",
 				"text/x-script.tcsh",
 				"text/x-script.zsh",
-				"application/x-sql"
+				"application/x-sql",
+				"text/x-glue"
 		});
 	}
 

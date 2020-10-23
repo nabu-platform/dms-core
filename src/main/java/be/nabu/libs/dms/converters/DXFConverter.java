@@ -37,21 +37,23 @@ abstract public class DXFConverter implements Converter {
 			String quote = matcher.group().replaceAll(quotePattern.pattern(), "$2");
 
 			String mimeType = URLConnection.guessContentTypeFromName(targetType);
-			if (mimeType == null)
-				throw new FormatException("Could not resolve '" + targetType + "' into a mime type");
-
-			File fragment = new MemoryFileFragment(file, quote.getBytes("UTF-8"), "quote", mimeType);
-			Converter converter = repository.getConverter(fragment.getContentType(), targetContentType);
-			if (converter == null) {
-				if (!bestEffort)
-					throw new FormatException("Can not find converter from '" + fragment.getContentType() + "' to '" + targetContentType + "'");
+			if (mimeType == null) {
+				logger.warn("Could not resolved blockquote type '" + targetType + "' to a mime type");
 			}
 			else {
-				ByteArrayOutputStream transformedOutput = new ByteArrayOutputStream();
-				converter.convert(repository, fragment, transformedOutput, properties);
-				quote = new String(transformedOutput.toByteArray(), "UTF-8");
-				content = content.replaceAll(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<blockquote format=\"" + targetType + "\">" + quote + "</blockquote>"));
+				File fragment = new MemoryFileFragment(file, quote.getBytes("UTF-8"), "quote", mimeType);
+				Converter converter = repository.getConverter(fragment.getContentType(), targetContentType);
+				if (converter == null) {
+					logger.warn("Could not find converter from " + fragment.getContentType() + " to " + targetContentType);
+				}
+				else {
+					ByteArrayOutputStream transformedOutput = new ByteArrayOutputStream();
+					converter.convert(repository, fragment, transformedOutput, properties);
+					quote = new String(transformedOutput.toByteArray(), "UTF-8");
+				}
 			}
+			// we replace the quote either way
+			content = content.replaceAll(Pattern.quote(matcher.group()), Matcher.quoteReplacement("<blockquote format=\"" + targetType + "\">" + quote + "</blockquote>"));
 		}
 		return content;
 	}
