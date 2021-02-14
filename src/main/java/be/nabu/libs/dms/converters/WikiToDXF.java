@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import be.nabu.libs.dms.api.Converter;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
+import be.nabu.libs.dms.api.Templater;
 import be.nabu.libs.dms.utils.FileUtils;
 import be.nabu.libs.resources.URIUtils;
 import be.nabu.libs.vfs.api.File;
@@ -46,6 +47,10 @@ public class WikiToDXF implements Converter {
 		logger.debug("Converting file '" + file + "'");
 		String content = FileUtils.toString(file, "UTF-8").replaceAll("\r", "");
 		
+		for (Templater templater : repository.getTemplaters()) {
+			content = templater.template(content);
+		}
+		
 		// find all the "quoted" parts, they have to be processed afterwards
 		Map<String, String> quotes = new HashMap<String, String>();
 		Pattern quotePattern = Pattern.compile(getQuotePattern());
@@ -56,6 +61,7 @@ public class WikiToDXF implements Converter {
 			content = content.replaceAll(Pattern.quote(matcher.group()), "[quote=" + uuid + "]");
 		}
 
+		
 		// preprocessing
 		content = escapeXML(content);
 		

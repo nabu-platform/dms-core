@@ -17,12 +17,14 @@ import be.nabu.libs.dms.api.ConverterResolver;
 import be.nabu.libs.dms.api.DocumentCacheManager;
 import be.nabu.libs.dms.api.DocumentManager;
 import be.nabu.libs.dms.api.FormatException;
+import be.nabu.libs.dms.api.Templater;
 import be.nabu.libs.vfs.api.File;
 import be.nabu.utils.io.IOUtils;
 
 public class SimpleDocumentManager implements DocumentManager {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
+	private List<Templater> templaters = new ArrayList<Templater>();
 	
 	private ConverterResolver converterResolver;
 	private DocumentCacheManager cacheManager;
@@ -78,6 +80,12 @@ public class SimpleDocumentManager implements DocumentManager {
 			}
 		}
 		
+		if (file.getContentType() == null) {
+			throw new IllegalStateException("The file has no content type: " + file.getPath());
+		}
+		if (toContentType == null) {
+			throw new IllegalArgumentException("The to content type is empty");
+		}
 		Converter converter = converterResolver.getConverter(file.getContentType(), toContentType);
 		if (converter == null)
 			throw new IllegalArgumentException("Can not convert " + file.getContentType() + " to " + toContentType + ", no converter exists");
@@ -120,4 +128,10 @@ public class SimpleDocumentManager implements DocumentManager {
 	public void setDatastore(WritableDatastore datastore) {
 		this.datastore = datastore;
 	}
+
+	@Override
+	public List<Templater> getTemplaters() {
+		return templaters;
+	}
+	
 }
