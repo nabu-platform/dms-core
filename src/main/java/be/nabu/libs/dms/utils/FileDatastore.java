@@ -50,7 +50,7 @@ public class FileDatastore implements WritableDatastore {
 			if (resolve.exists()) {
 				return new DataProperties() {
 					@Override
-					public long getSize() {
+					public Long getSize() {
 						try {
 							return resolve.getSize();
 						}

@@ -160,7 +160,10 @@ public class CodeToHTML implements Converter {
 		"where",
 		"insert",
 		"delete",
-		"update"
+		"update",
+		"create table",
+		"alter table",
+		"drop table"
 	};
 
 	@Override
